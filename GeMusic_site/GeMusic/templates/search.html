@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block title %}搜索 - GeMusic{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center align-items-center" style="min-height: 60vh;">
+    <div class="col-md-6 text-center">
+        <h2 class="fw-bold mb-4">🔍 探索你喜爱的旋律</h2>
+        
+        <form action="/search/results/" method="get" class="p-4 rounded-4 shadow" style="background: var(--card-bg); border: 1px solid var(--card-border);">
+            <div class="mb-4">
+                <input type="text" name="keyword" class="form-control form-control-lg text-center" placeholder="歌名、歌词、歌手..." maxlength="20" required>
+            </div>
+            <div class="d-flex justify-content-center gap-4 mb-4">
+                <div class="form-check custom-radio">
+                    <input class="form-check-input" type="radio" name="search_type" id="search_song" value="song" checked>
+                    <label class="form-check-label" for="search_song">单曲</label>
+                </div>
+                <div class="form-check custom-radio">
+                    <input class="form-check-input" type="radio" name="search_type" id="search_singer" value="singer">
+                    <label class="form-check-label" for="search_singer">艺术家</label>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary w-100 py-2.5 btn-lg">开启搜寻</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

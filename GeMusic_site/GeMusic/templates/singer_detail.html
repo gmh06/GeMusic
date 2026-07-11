@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ singer.name }} - GeMusic{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-4">
+        <img src="/static/singers/{{ singer.mid }}.jpg" class="img-fluid rounded-circle mb-3" width="200" height="200" alt="{{ singer.name }}">
+        <h2>{{ singer.name }}</h2>
+        <p class="text-muted">粉丝: {{ singer.num_followers|default:"-" }}</p>
+        <p>歌曲: {{ singer.num_songs|default:"-" }} | 专辑: {{ singer.num_albums|default:"-" }} | 影视: {{ singer.num_movies|default:"-" }}</p>
+        {% if singer.intro %}
+        <div class="mt-3 intro-scroll">
+            <p class="text-sm">{{ singer.intro }}</p>
+        </div>
+        {% endif %}
+        <div class="mt-3">
+            <a href="https://y.qq.com/n/ryqq_v2/singer/{{ singer.mid }}" target="_blank" class="btn btn-sm btn-outline-info">
+                <i class="fa fa-external-link"></i> QQ音乐页面
+            </a>
+        </div>
+    </div>
+    
+    <div class="col-md-8">
+        <h3>热门歌曲</h3>
+        {% if songs %}
+        <div class="list-group">
+            {% for song in songs %}
+            <div class="list-group-item">
+                <div class="row">
+                    <div class="col-md-2">
+                        <img src="/static/songs/{{ song.mid }}.jpg" class="img-thumbnail" width="60" height="60" alt="{{ song.name }}">
+                    </div>
+                    <div class="col-md-10">
+                        <h5><a href="/song/{{ song.mid }}/">{{ song.name }}</a></h5>
+                        <p class="text-muted">{{ song.album|default:"-" }}</p>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p>暂无歌曲信息</p>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+.intro-scroll {
+    max-height: 150px;
+}
+</style>
+{% endblock %}

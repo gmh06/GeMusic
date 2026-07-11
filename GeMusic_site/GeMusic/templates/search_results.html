@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+
+{% block title %}搜索结果 - GeMusic{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">🔍 搜索结果</h2>
+
+<p class="text-muted">
+    搜索关键词: "{{ keyword }}" | 
+    搜索类型: {% if search_type == 'song' %}歌曲{% else %}歌手{% endif %} | 
+    找到 {{ result_count }} 条结果 | 
+    耗时 {{ search_time }} 毫秒
+</p>
+
+{% if results %}
+{% if search_type == 'song' %}
+<div class="list-group">
+    {% for song in results %}
+    <div class="list-group-item">
+        <div class="row">
+            <div class="col-md-2">
+                <img src="/static/songs/{{ song.mid }}.jpg" class="img-thumbnail" width="80" height="80" alt="{{ song.name }}">
+            </div>
+            <div class="col-md-10">
+                <h5><a href="/song/{{ song.mid }}/">{{ song.name }}</a></h5>
+                <p class="text-muted">
+                    {% for singer in song.singers.all %}
+                    <a href="/singer/{{ singer.mid }}/">{{ singer.name }}</a>{% if not forloop.last %}, {% endif %}
+                    {% endfor %}
+                </p>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="row">
+    {% for singer in results %}
+    <div class="col-md-3">
+        <div class="card">
+            <img src="/static/singers/{{ singer.mid }}.jpg" class="card-img-top" height="200" alt="{{ singer.name }}">
+            <div class="card-body text-center">
+                <h5 class="card-title">{{ singer.name }}</h5>
+                <a href="/singer/{{ singer.mid }}/" class="btn btn-primary">查看详情</a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+{% if paginator.num_pages > 1 %}
+<nav class="mt-4">
+    <div class="d-flex flex-column flex-md-row align-items-center justify-content-center gap-3">
+        <ul class="pagination mb-0">
+            <li class="page-item {% if not results.has_previous %}disabled{% endif %}">
+                <a class="page-link" href="?keyword={{ keyword }}&search_type={{ search_type }}&page=1">首页</a>
+            </li>
+            <li class="page-item {% if not results.has_previous %}disabled{% endif %}">
+                <a class="page-link" href="?keyword={{ keyword }}&search_type={{ search_type }}&page={% if results.has_previous %}{{ results.previous_page_number }}{% else %}1{% endif %}">上一页</a>
+            </li>
+            {% for num in paginator.page_range %}
+            {% if num >= results.number|add:-2 and num <= results.number|add:2 %}
+            <li class="page-item {% if num == results.number %}active{% endif %}">
+                <a class="page-link" href="?keyword={{ keyword }}&search_type={{ search_type }}&page={{ num }}">{{ num }}</a>
+            </li>
+            {% endif %}
+            {% endfor %}
+            <li class="page-item {% if not results.has_next %}disabled{% endif %}">
+                <a class="page-link" href="?keyword={{ keyword }}&search_type={{ search_type }}&page={% if results.has_next %}{{ results.next_page_number }}{% else %}{{ results.number }}{% endif %}">下一页</a>
+            </li>
+            <li class="page-item {% if not results.has_next %}disabled{% endif %}">
+                <a class="page-link" href="?keyword={{ keyword }}&search_type={{ search_type }}&page={{ paginator.num_pages }}">尾页</a>
+            </li>
+        </ul>
+        <form class="d-flex align-items-center gap-2" method="get">
+            <input type="hidden" name="keyword" value="{{ keyword }}">
+            <input type="hidden" name="search_type" value="{{ search_type }}">
+            <span class="text-muted small">跳至</span>
+            <input type="number" name="page_input" min="1" max="{{ paginator.num_pages }}" value="{{ results.number }}" class="form-control form-control-sm" style="width: 70px;">
+            <span class="text-muted small">页 / 共 {{ paginator.num_pages }} 页</span>
+            <button type="submit" class="btn btn-sm btn-outline-primary">GO</button>
+        </form>
+    </div>
+</nav>
+{% endif %}
+
+{% else %}
+<p class="text-center text-muted">没有找到匹配的结果</p>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+
+{% block title %}歌手列表 - GeMusic{% endblock %}
+
+{% block content %}
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-5 gap-3">
+    <h2 class="fw-bold m-0">🎤 歌手</h2>
+    <form class="d-flex align-items-center gap-2" method="get">
+        <span class="text-muted small">按</span>
+        <select name="sort" class="form-select form-select-sm" style="width: auto;">
+            <option value="num_followers" {% if sort_by == 'num_followers' %}selected{% endif %}>粉丝数</option>
+            <option value="num_songs" {% if sort_by == 'num_songs' %}selected{% endif %}>歌曲数</option>
+            <option value="num_albums" {% if sort_by == 'num_albums' %}selected{% endif %}>专辑数</option>
+            <option value="name" {% if sort_by == 'name' %}selected{% endif %}>歌手名</option>
+        </select>
+        <select name="dir" class="form-select form-select-sm" style="width: auto;">
+            <option value="desc" {% if sort_dir == 'desc' %}selected{% endif %}>从高到低</option>
+            <option value="asc" {% if sort_dir == 'asc' %}selected{% endif %}>从低到高</option>
+        </select>
+        <span class="text-muted small">排序</span>
+        <button type="submit" class="btn btn-sm btn-outline-primary">应用</button>
+    </form>
+</div>
+
+<p class="text-muted small mb-4">当前排序：{{ sort_label }}（{% if sort_dir == 'desc' %}从高到低{% else %}从低到高{% endif %}）</p>
+
+<div class="row g-4">
+    {% for singer in singers %}
+    <div class="col-6 col-md-4 col-lg-3">
+        <div class="card h-100 text-center border-0 p-3 bg-transparent">
+            <div class="overflow-hidden mx-auto mb-3 rounded-circle shadow-lg" style="width: 150px; height: 150px; border: 3px solid var(--card-border);">
+                <img src="/static/singers/{{ singer.mid }}.jpg" class="w-100 h-100 object-fit-cover" alt="{{ singer.name }}">
+            </div>
+            <div class="card-body p-0">
+                <h5 class="fw-bold mb-1"><a href="/singer/{{ singer.mid }}/">{{ singer.name }}</a></h5>
+                <div class="small text-muted mb-3">
+                    <p class="mb-1">✨ {{ singer.num_followers|default:"0" }} 粉丝</p>
+                    <p class="mb-0">🎵 {{ singer.num_songs|default:"0" }} 首 · 💿 {{ singer.num_albums|default:"0" }} 张</p>
+                </div>
+                <a href="/singer/{{ singer.mid }}/" class="btn btn-outline-light btn-sm rounded-pill px-3">档案</a>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <p class="text-center text-muted col-12 py-5">暂无歌手数据</p>
+    {% endfor %}
+</div>
+
+{% if paginator.num_pages > 1 %}
+<nav class="mt-5">
+    <div class="d-flex flex-column flex-md-row align-items-center justify-content-center gap-3">
+        <ul class="pagination mb-0">
+            <li class="page-item {% if not singers.has_previous %}disabled{% endif %}">
+                <a class="page-link" href="?sort={{ sort_by }}&dir={{ sort_dir }}&page=1">首页</a>
+            </li>
+            <li class="page-item {% if not singers.has_previous %}disabled{% endif %}">
+                <a class="page-link" href="?sort={{ sort_by }}&dir={{ sort_dir }}&page={% if singers.has_previous %}{{ singers.previous_page_number }}{% else %}1{% endif %}">上一页</a>
+            </li>
+            {% for num in paginator.page_range %}
+            {% if num >= singers.number|add:-2 and num <= singers.number|add:2 %}
+            <li class="page-item {% if num == singers.number %}active{% endif %}">
+                <a class="page-link" href="?sort={{ sort_by }}&dir={{ sort_dir }}&page={{ num }}">{{ num }}</a>
+            </li>
+            {% endif %}
+            {% endfor %}
+            <li class="page-item {% if not singers.has_next %}disabled{% endif %}">
+                <a class="page-link" href="?sort={{ sort_by }}&dir={{ sort_dir }}&page={% if singers.has_next %}{{ singers.next_page_number }}{% else %}{{ singers.number }}{% endif %}">下一页</a>
+            </li>
+            <li class="page-item {% if not singers.has_next %}disabled{% endif %}">
+                <a class="page-link" href="?sort={{ sort_by }}&dir={{ sort_dir }}&page={{ paginator.num_pages }}">尾页</a>
+            </li>
+        </ul>
+        <form class="d-flex align-items-center gap-2" method="get">
+            <input type="hidden" name="sort" value="{{ sort_by }}">
+            <input type="hidden" name="dir" value="{{ sort_dir }}">
+            <span class="text-muted small">跳至</span>
+            <input type="number" name="page_input" min="1" max="{{ paginator.num_pages }}" value="{{ singers.number }}" class="form-control form-control-sm" style="width: 70px;">
+            <span class="text-muted small">页 / 共 {{ paginator.num_pages }} 页</span>
+            <button type="submit" class="btn btn-sm btn-outline-primary">GO</button>
+        </form>
+    </div>
+</nav>
+{% endif %}
+{% endblock %}

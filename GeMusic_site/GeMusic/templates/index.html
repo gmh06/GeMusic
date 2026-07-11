@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+
+{% block title %}歌曲列表 - GeMusic{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-5">
+    <h2 class="fw-bold m-0">🎵 歌曲</h2>
+    <span class="text-muted fs-6">碰撞灵魂的旋律</span>
+</div>
+
+<div class="row g-4">
+    {% for song in songs %}
+    <div class="col-12 col-md-6">
+        <div class="list-group-item p-3">
+            <div class="d-flex align-items-center">
+                <div class="position-relative me-4">
+                    <img src="/static/songs/{{ song.mid }}.jpg" class="img-thumbnail" style="width: 90px; height: 90px; border-radius: 12px; transform: rotate(-3deg);" alt="{{ song.name }}">
+                </div>
+                <div class="flex-grow-1">
+                    <h5 class="fw-bold mb-1"><a href="/song/{{ song.mid }}/" class="stretched-link">{{ song.name }}</a></h5>
+                    <p class="text-muted small mb-0">
+                        {% for singer in song.singers.all %}
+                        <span class="text-light">{{ singer.name }}</span>{% if not forloop.last %} / {% endif %}
+                        {% endfor %}
+                    </p>
+                    <div class="d-flex gap-3 mt-2 small text-muted">
+                        <span>💿 {{ song.album|default:"单曲" }}</span>
+                        <span>💬 {{ song.num_comments|default:"0" }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12 py-5 text-center text-muted">暂无歌曲数据</div>
+    {% endfor %}
+</div>
+
+{% if paginator.num_pages > 1 %}
+<nav class="mt-5">
+    <div class="d-flex flex-column flex-md-row align-items-center justify-content-center gap-3">
+        <ul class="pagination mb-0">
+            <li class="page-item {% if not songs.has_previous %}disabled{% endif %}">
+                <a class="page-link" href="?page=1">首页</a>
+            </li>
+            <li class="page-item {% if not songs.has_previous %}disabled{% endif %}">
+                <a class="page-link" href="?page={% if songs.has_previous %}{{ songs.previous_page_number }}{% else %}1{% endif %}">上一页</a>
+            </li>
+            {% for num in paginator.page_range %}
+            {% if num >= songs.number|add:-2 and num <= songs.number|add:2 %}
+            <li class="page-item {% if num == songs.number %}active{% endif %}">
+                <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+            </li>
+            {% endif %}
+            {% endfor %}
+            <li class="page-item {% if not songs.has_next %}disabled{% endif %}">
+                <a class="page-link" href="?page={% if songs.has_next %}{{ songs.next_page_number }}{% else %}{{ songs.number }}{% endif %}">下一页</a>
+            </li>
+            <li class="page-item {% if not songs.has_next %}disabled{% endif %}">
+                <a class="page-link" href="?page={{ paginator.num_pages }}">尾页</a>
+            </li>
+        </ul>
+        <form class="d-flex align-items-center gap-2" method="get">
+            <span class="text-muted small">跳至</span>
+            <input type="number" name="page_input" min="1" max="{{ paginator.num_pages }}" value="{{ songs.number }}" class="form-control form-control-sm" style="width: 70px;">
+            <span class="text-muted small">页 / 共 {{ paginator.num_pages }} 页</span>
+            <button type="submit" class="btn btn-sm btn-outline-primary">GO</button>
+        </form>
+    </div>
+</nav>
+{% endif %}
+{% endblock %}

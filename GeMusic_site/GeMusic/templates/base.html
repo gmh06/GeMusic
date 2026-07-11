@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}GeMusic{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0b0c10;
+            --card-bg: rgba(255, 255, 255, 0.04);
+            --card-border: rgba(255, 255, 255, 0.08);
+            --text-main: #f8f9fa;
+            --text-muted: #8a8f98;
+            --accent-color: #00f5d4; /* 极光绿点缀 */
+            --accent-gradient: linear-gradient(135deg, #00f5d4, #7b2cbf);
+        }
+
+        body { 
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Noto Sans SC', sans-serif;
+            padding-top: 90px;
+            letter-spacing: 0.5px;
+        }
+
+        /* 极简毛玻璃导航栏 */
+        .navbar {
+            background: rgba(11, 12, 16, 0.75) !important;
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-bottom: 1px solid var(--card-border);
+            padding: 15px 0;
+        }
+        .navbar-brand {
+            font-weight: 700;
+            letter-spacing: 1px;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .nav-link {
+            color: var(--text-muted) !important;
+            transition: color 0.3s ease;
+            font-weight: 500;
+        }
+        .nav-link:hover, .nav-link.active {
+            color: var(--accent-color) !important;
+        }
+
+        /* 全局卡片与列表美化 */
+        .card, .list-group-item { 
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            color: var(--text-main);
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            backdrop-filter: blur(5px);
+        }
+        .card:hover, .list-group-item:hover {
+            transform: translateY(-5px);
+            border-color: rgba(0, 245, 212, 0.4);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        /* 链接样式 */
+        a {
+            color: var(--text-main);
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+        a:hover {
+            color: var(--accent-color);
+        }
+
+        /* 现代图片处理 */
+        .img-thumbnail, .card-img-top, .img-fluid {
+            border: none;
+            border-radius: 12px;
+            object-fit: cover;
+            background: transparent;
+        }
+
+        /* 歌词美化 */
+        .lyrics {
+            max-height: 500px;
+            overflow-y: auto;
+            padding-right: 15px;
+        }
+        .lyrics::-webkit-scrollbar { width: 4px; }
+        .lyrics::-webkit-scrollbar-thumb { background: var(--card-border); border-radius: 4px; }
+        .lyrics-line { 
+            line-height: 2.2; 
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            transition: color 0.3s ease;
+            text-align: center;
+        }
+        .lyrics-line:hover { color: var(--accent-color); }
+
+        /* 分页与按钮 */
+        .pagination .page-link {
+            background: var(--card-bg);
+            border-color: var(--card-border);
+            color: var(--text-main);
+            border-radius: 8px;
+            margin: 0 3px;
+        }
+        .pagination .page-item.active .page-link {
+            background: var(--accent-gradient);
+            border: none;
+        }
+        .pagination .page-item.disabled .page-link {
+            background: transparent;
+            border-color: var(--card-border);
+            color: rgba(255,255,255,0.2);
+        }
+        .btn-primary {
+            background: var(--accent-gradient);
+            border: none;
+            border-radius: 8px;
+            font-weight: 500;
+            padding: 8px 20px;
+            transition: opacity 0.2s;
+        }
+        .btn-primary:hover { opacity: 0.9; }
+
+        /* 输入框美化 */
+        .form-control {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--card-border);
+            color: white;
+            border-radius: 8px;
+        }
+        .form-control:focus {
+            background: rgba(255,255,255,0.08);
+            border-color: var(--accent-color);
+            color: white;
+            box-shadow: 0 0 0 0.25rem rgba(0, 245, 212, 0.15);
+        }
+        
+        .text-muted { color: var(--text-muted) !important; }
+
+        /* 全局滚动条样式 - 统一全站滑块外观 */
+        .scrollable-content, .intro-scroll {
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding-right: 10px;
+        }
+        
+        .scrollable-content::-webkit-scrollbar,
+        .intro-scroll::-webkit-scrollbar,
+        .lyrics::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .scrollable-content::-webkit-scrollbar-track,
+        .intro-scroll::-webkit-scrollbar-track,
+        .lyrics::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 3px;
+        }
+        
+        .scrollable-content::-webkit-scrollbar-thumb,
+        .intro-scroll::-webkit-scrollbar-thumb,
+        .lyrics::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 3px;
+        }
+        
+        .scrollable-content::-webkit-scrollbar-thumb:hover,
+        .intro-scroll::-webkit-scrollbar-thumb:hover,
+        .lyrics::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="/">✨ GeMusic</a>
+            <div class="collapse navbar-collapse justify-content-end">
+                <div class="navbar-nav">
+                    <a class="nav-link mx-2" href="/">歌曲</a>
+                    <a class="nav-link mx-2" href="/singers/">歌手</a>
+                    <a class="nav-link mx-2" href="/search/">探索</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        {% block content %}{% endblock %}
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
