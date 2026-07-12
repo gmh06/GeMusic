@@ -74,7 +74,7 @@
             <input type="hidden" name="sort" value="{{ sort_by }}">
             <input type="hidden" name="dir" value="{{ sort_dir }}">
             <span class="text-muted small">跳至</span>
-            <input type="number" name="page_input" min="1" max="{{ paginator.num_pages }}" value="{{ singers.number }}" class="form-control form-control-sm" style="width: 70px;">
+            <input type="number" name="page" min="1" max="{{ paginator.num_pages }}" value="{{ singers.number }}" class="form-control form-control-sm" style="width: 70px;">
             <span class="text-muted small">页 / 共 {{ paginator.num_pages }} 页</span>
             <button type="submit" class="btn btn-sm btn-outline-primary">GO</button>
         </form>

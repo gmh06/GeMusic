@@ -12,8 +12,6 @@ def index(request):
     paginator = Paginator(songs_list, 8)
     
     page = request.GET.get('page', 1)
-    if 'page_input' in request.GET:
-        page = request.GET['page_input']
     
     try:
         page_num = int(page)
@@ -72,8 +70,6 @@ def singer_list(request):
     paginator = Paginator(singers_list, 8)
     
     page = request.GET.get('page', 1)
-    if 'page_input' in request.GET:
-        page = request.GET['page_input']
     
     try:
         page_num = int(page)
@@ -130,7 +126,7 @@ def search_results(request):
     if keyword:
         if search_type == 'song':
             songs = Song.objects.filter(
-                Q(name__icontains=keyword) | Q(lyrics__icontains=keyword)
+                Q(name__icontains=keyword) | Q(lyrics__icontains=keyword) | Q(singers__name__icontains=keyword)
             ).distinct()
             results = list(songs)
             result_count = len(results)

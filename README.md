@@ -20,6 +20,7 @@ music_web/
 │   └── data/ # 爬虫原始数据不提交到 Git
 ├── GeMusic_site/ # 网站模块
 │   ├── manage.py
+│   ├── db.sqlite3 # 数据库文件不提交到 Git
 │   ├── GeMusic/
 │   │   ├── models.py
 │   │   ├── views.py
@@ -30,7 +31,11 @@ music_web/
 │   │   └── templates/
 │   └── GeMusic_site/
 │       ├── settings.py
+│       ├── secret_key.txt # SECRET_KEY 不提交到 Git
 │       └── urls.py
+├── report/ # 报告模块
+│   ├── analyze_report/ # 数据分析报告
+│   └── project_report/ # 项目报告
 ├── import_data.py # 数据迁移脚本
 ├── analyze.ipynb # 数据分析
 ├── .gitignore
