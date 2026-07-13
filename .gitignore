@@ -5,6 +5,4 @@ crawler/data/
 crawler/config.json
 
 # GeMusic_site
-GeMusic_site/db.sqlite3
 GeMusic_site/GeMusic_site/secret_key.txt
-GeMusic_site/GeMusic/static/

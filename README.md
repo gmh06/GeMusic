@@ -20,14 +20,14 @@ music_web/
 │   └── data/ # 爬虫原始数据不提交到 Git
 ├── GeMusic_site/ # 网站模块
 │   ├── manage.py
-│   ├── db.sqlite3 # 数据库文件不提交到 Git
+│   ├── db.sqlite3 # 数据库文件
 │   ├── GeMusic/
 │   │   ├── models.py
 │   │   ├── views.py
 │   │   ├── urls.py
 │   │   ├── admin.py
 │   │   ├── migrations/
-│   │   ├── static/ # 静态资源图片不提交到 Git
+│   │   ├── static/ # 静态资源图片
 │   │   └── templates/
 │   └── GeMusic_site/
 │       ├── settings.py
