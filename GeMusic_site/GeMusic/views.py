@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.db.models import Q
+from django.db.models import Q, Value
+from django.db.models.functions import Concat
 import json
 import time
 
@@ -125,10 +126,31 @@ def search_results(request):
     
     if keyword:
         if search_type == 'song':
-            songs = Song.objects.filter(
-                Q(name__icontains=keyword) | Q(lyrics__icontains=keyword) | Q(singers__name__icontains=keyword)
+            songs_by_name_singer = Song.objects.filter(
+                Q(name__icontains=keyword) | Q(singers__name__icontains=keyword)
             ).distinct()
-            results = list(songs)
+
+            songs_by_lyrics_ids = set()
+            songs_with_lyrics = Song.objects.exclude(lyrics__isnull=True).exclude(lyrics='')
+            for song in songs_with_lyrics:
+                try:
+                    lyrics_list = json.loads(song.lyrics)
+                    if isinstance(lyrics_list, list):
+                        lyrics_text = '\n'.join(str(line) for line in lyrics_list)
+                        if keyword.lower() in lyrics_text.lower():
+                            songs_by_lyrics_ids.add(song.mid)
+                except (json.JSONDecodeError, TypeError):
+                    if song.lyrics and keyword.lower() in song.lyrics.lower():
+                        songs_by_lyrics_ids.add(song.mid)
+
+            matched_mids = set(song.mid for song in songs_by_name_singer)
+            matched_mids.update(songs_by_lyrics_ids)
+
+            if matched_mids:
+                songs = Song.objects.filter(mid__in=matched_mids).order_by('-num_comments')
+                results = list(songs)
+            else:
+                results = []
             result_count = len(results)
         elif search_type == 'singer':
             singers = Singer.objects.filter(
